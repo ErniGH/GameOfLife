@@ -22,6 +22,9 @@ class Cuadrado{
         this.cuadradoDiv.style.left=this.posX*tamano +"px";
         
         document.body.appendChild(this.cuadradoDiv);
+        this.cuadradoDiv.style.background = '#' + (function co(lor){   return (lor +=
+            [0,1,2,3,4,5,6,7,8,9,'a','b','c','d','e','f'][Math.floor(Math.random()*16)])
+            && (lor.length == 6) ?  lor : co(lor); })('');
     }
     
     matar(){
@@ -81,7 +84,10 @@ function comprobar(){
                     if(listCompro[(c.posX+a)+"|"+(c.posY+b)]){
                         listCompro[(c.posX+a)+"|"+(c.posY+b)].vecinos++;
                     }else{
-                        listCompro[(c.posX+a)+"|"+(c.posY+b)] = new Compro(c.posX+a, c.posY+b);
+                        if(((c.posX+a)*tamano<window.innerWidth-8-tamano && (c.posY+b)*tamano<window.innerHeight-8-tamano)&&((c.posX+a)*tamano>-8-tamano && (c.posY+b)*tamano>-8-tamano)){
+                            listCompro[(c.posX+a)+"|"+(c.posY+b)] = new Compro(c.posX+a, c.posY+b);
+                        }
+                       
                     }
                 }
             }
@@ -108,20 +114,25 @@ function comprobar(){
 
 
 function mover() {
-    if(!pausa){
+    if (!pausa){
         comprobar();
     }
 }
-
-function pausar(){
-    if(pausa){
+function alternarPausa() {
+    if (pausa) {
         movimiento = setInterval(mover,1000/60); //60fps	
         pausa = false;
     }else{
         clearInterval(movimiento);
         pausa = true;
+    } 
+}
+function pausar(nuevoEstado) {
+    if (nuevoEstado != pausa) {
+        alternarPausa();
     }
 }
+
 function compartir() {
     let cuadradosMinimos = [];
     for (let keyCuadrado in cuadraditos) {
@@ -132,22 +143,32 @@ function compartir() {
     nuevaUrl.searchParams.set("estado", serializar(cuadradosMinimos));
     window.history.pushState(null, null, nuevaUrl.href);
 }
+function reiniciar(){
+    pausar(true);
+    for (const id in cuadraditos) {
+        cuadraditos[id].matar();
+    }
+}
 function inicio() {
     document.addEventListener("click",click);
-    alert("JUEGO DE LA VIDA: \n pulsa click para crear la celulas y P para iniciar o pausar");
+    alert("JUEGO DE LA VIDA: \n\nClick izquierdo: Crear las celulas\nP: Iniciar o Pausar\nS: Salvar estado\nN: Siguiente paso\nR: Reiniciar");
     for (let i in estado) {
         let nuevoCuadrado = estado[i];
         cuadraditos[cId(nuevoCuadrado.posX, nuevoCuadrado.posY)] = new Cuadrado(nuevoCuadrado.posX, nuevoCuadrado.posY);
     }
     document.addEventListener('keydown', function(event) {
         if (event.code === 'KeyP') {
-            pausar();
+            alternarPausa();
         } else if (event.code === 'KeyS') {
             //pone el estado actual en la url
             compartir();
         }else if (event.code == 'KeyN') {
             //siguiente paso
             comprobar();
+        }else if(event.code === 'KeyR'){
+            reiniciar();
+        }else if(event.code === 'KeyQ'){
+            //es simplemente ayuda
         }
     });							
 }
