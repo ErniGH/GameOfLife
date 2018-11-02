@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en" style="background-color:#8F7291;">
+	<head>
+		<meta charset="utf-8"/>
+		<style>
+			.cuadrado{
+				background-color: #ffffff;
+				position: absolute;
+			}
+
+		</style>
+		<script>
+			window.addEventListener("load", inicio, false);
+			var cuadraditos = new Object();
+			var pausa = true;
+			var tamano = 10;
+			
+			var cPrincipal;
+			var principal = false;
+			
+			class Cuadrado{
+				constructor(posX, posY){
+					this.posX = posX;
+					this.posY = posY;
+					this.id = this.posX+"|"+this.posY;
+					
+					this.cuadradoDiv = document.createElement("div");
+					
+					this.cuadradoDiv.style.width= tamano+"px";
+					this.cuadradoDiv.style.height= tamano+"px";
+					
+					this.cuadradoDiv.classList.add("cuadrado");
+					this.cuadradoDiv.style.top=this.posY*tamano +"px";
+					this.cuadradoDiv.style.left=this.posX*tamano +"px";
+					
+					document.body.appendChild(this.cuadradoDiv);
+					
+					if(principal){
+						this.cuadradoDiv.style.background = "#000000";
+						cPrincipal = this;
+					}
+				}
+				
+				matar(){
+					//console.log(this.cuadradoDiv, "muere");
+					this.cuadradoDiv.remove();
+					delete cuadraditos[this.id];
+				}
+			}
+			
+			class Compro{
+				constructor(posX, posY){
+					this.posX = posX;
+					this.posY = posY;
+					this.id = this.posX+"|"+this.posY;
+				}
+			
+			}
+			
+			
+			function click(event){
+				var x = event.clientX-8;
+				var y = event.clientY-8;
+				
+				x = Math.floor(x/10);
+				y = Math.floor(y/10);
+				
+				var w = window.innerWidth;
+				var h = window.innerHeight;
+				
+				if(cuadraditos[x+"|"+y]){
+					
+					cuadraditos[x+"|"+y].matar();
+					
+				}else{
+					cuadraditos[x+"|"+y] = new Cuadrado(x,y);
+				}
+				
+				
+			}
+			
+			function preguntar(){
+				console.log(cPrincipal.posX, cPrincipal.posY);
+				var msgPregunta = "if(";
+				var msgRespuesta = "";
+				var listCompro = new Object();
+				for(var i in cuadraditos){
+					var c = cuadraditos[i];
+					//El mismo
+					if(!listCompro[c.posX+"|"+c.posY]){
+						listCompro[c.posX+"|"+c.posY] = new Compro(c.posX, c.posY);
+					}
+					var numeritos = [-1, 0, 1];
+					for (const j in numeritos){
+						a=numeritos[j];
+						for (const k in numeritos){
+							b=numeritos[k];
+							if(a != 0 || b !=0){
+								if(!listCompro[(c.posX+a)+"|"+(c.posY+b)]){
+									listCompro[(c.posX+a)+"|"+(c.posY+b)] = new Compro(c.posX+a, c.posY+b);
+								}
+							}
+						}
+					}
+				}
+
+				for(var i in listCompro){
+					var cId = listCompro[i].id;
+					var cX = listCompro[i].posX;
+					var cY = listCompro[i].posY;
+					if(cuadraditos[cId]){
+						msgPregunta += "cuadraditos[(x+"+(cX-cPrincipal.posX)+")+\"|\"+(y+"+(cY-cPrincipal.posY)+")] && ";
+						msgRespuesta += "cuadraditos[(x+"+(cX-cPrincipal.posX)+")+\"|\"+(y+"+(cY-cPrincipal.posY)+")].cuadradoDiv.style.background = \n";
+					}else{
+						msgPregunta += "!cuadraditos[(x+"+(cX-cPrincipal.posX)+")+\"|\"+(y+"+(cY-cPrincipal.posY)+")] && ";
+					}
+				}
+				
+				
+				
+				msgPregunta += "){\n"+msgRespuesta+"}";;
+				console.log(msgPregunta);
+				
+			}
+			
+			function prin(){
+				if(principal){
+					principal = false;
+				}else{
+					principal = true;
+				}
+			}
+			
+			function inicio(){
+				document.addEventListener("click",click);
+				alert("JUEGO DE LA VIDA: \n pulsa click para crear la celulas y P para iniciar o pausar");
+				
+				document.addEventListener('keydown', function(event) {
+													if (event.code == 'KeyP') {
+														preguntar();
+													}else if(event.code == 'KeyC'){
+														prin();
+													}
+												});
+			}
+		
+		</script>
+	</head>
+	<body style="position: relative">
+
+	</body>
+</html>
