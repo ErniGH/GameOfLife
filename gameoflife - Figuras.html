@@ -82,7 +82,8 @@
 			function preguntar(){
 				console.log(cPrincipal.posX, cPrincipal.posY);
 				var msgPregunta = "if(";
-				var msgRespuesta = "";
+				var msgColor = "";
+				var msgPintado = "";
 				var listCompro = new Object();
 				for(var i in cuadraditos){
 					var c = cuadraditos[i];
@@ -110,7 +111,8 @@
 					var cY = listCompro[i].posY;
 					if(cuadraditos[cId]){
 						msgPregunta += "cuadraditos[(x+"+(cX-cPrincipal.posX)+")+\"|\"+(y+"+(cY-cPrincipal.posY)+")] && ";
-						msgRespuesta += "cuadraditos[(x+"+(cX-cPrincipal.posX)+")+\"|\"+(y+"+(cY-cPrincipal.posY)+")].cuadradoDiv.style.background = \n";
+						msgPintado += "cuadraditos[(x+"+(cX-cPrincipal.posX)+")+\"|\"+(y+"+(cY-cPrincipal.posY)+")].pintado = true;\n";
+						msgColor += "cuadraditos[(x+"+(cX-cPrincipal.posX)+")+\"|\"+(y+"+(cY-cPrincipal.posY)+")].cuadradoDiv.style.background = \n";
 					}else{
 						msgPregunta += "!cuadraditos[(x+"+(cX-cPrincipal.posX)+")+\"|\"+(y+"+(cY-cPrincipal.posY)+")] && ";
 					}
@@ -118,7 +120,7 @@
 				
 				
 				
-				msgPregunta += "){\n"+msgRespuesta+"}";;
+				msgPregunta += "){\n"+msgColor+"\n\n"+msgPintado+"}";;
 				console.log(msgPregunta);
 				
 			}

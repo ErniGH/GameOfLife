@@ -8,6 +8,7 @@ var tamano = 10;
 
 class Cuadrado{
     constructor(posX, posY){
+
         this.posX = posX;
         this.posY = posY;
         this.id = cId(this.posX, this.posY);
@@ -20,6 +21,8 @@ class Cuadrado{
         this.cuadradoDiv.classList.add("cuadrado");
         this.cuadradoDiv.style.top=this.posY*tamano +"px";
         this.cuadradoDiv.style.left=this.posX*tamano +"px";
+
+        this.pintado = false;
         
         document.body.appendChild(this.cuadradoDiv);
         this.cuadradoDiv.style.background = '#' + (function co(lor){   return (lor +=
@@ -60,7 +63,9 @@ function click(event){
         cuadraditos[id].matar();
         
     }else{
-        cuadraditos[id] = new Cuadrado(x,y);
+        var c = new Cuadrado(x,y);
+        c.cuadradoDiv.style.background = "#00C0C0";
+        cuadraditos[id] = c;
     }
     
     
@@ -156,6 +161,7 @@ function inicio() {
         let nuevoCuadrado = estado[i];
         cuadraditos[cId(nuevoCuadrado.posX, nuevoCuadrado.posY)] = new Cuadrado(nuevoCuadrado.posX, nuevoCuadrado.posY);
     }
+    buscarFiguras();
     document.addEventListener('keydown', function(event) {
         if (event.code === 'KeyP') {
             alternarPausa();
